@@ -1,0 +1,64 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "jarvis-core"
+version = "0.1.0"
+description = "JARVIS - a cross-platform personal AI operating layer"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+dependencies = [
+    "fastapi>=0.110",
+    "uvicorn>=0.30",
+    "websockets>=12",
+    "pydantic>=2.6",
+    "httpx>=0.27",
+    "psutil>=5.9",
+    "keyring>=24",
+    "tomli-w>=1.0",
+]
+
+[project.optional-dependencies]
+voice = [
+    "numpy>=1.26",
+    "sounddevice>=0.4.6",
+    "faster-whisper>=1.0",
+    "openwakeword>=0.6",
+    "pyttsx3>=2.90",
+    # The Kokoro voice (model files: `jarvis voice install`). Pulls in phonemizer and
+    # espeakng-loader, which are GPL-3.0: fine for local use, relevant if JARVIS is distributed.
+    "kokoro-onnx>=0.6.1,<0.7",
+]
+vision = ["mss>=9", "pillow>=10"]
+camera = ["opencv-python-headless>=4.8"]
+control = ["pyautogui>=0.9.54"]
+browser = ["playwright>=1.40"]
+desktop = ["pywebview>=5"]
+tls = ["cryptography>=42"]
+all = [
+    "jarvis-core[voice,vision,control,browser,desktop,tls]",
+]
+dev = ["pytest>=8", "pytest-asyncio>=0.23"]
+
+[project.scripts]
+jarvis = "jarvis.clients.cli.main:main"
+
+[tool.setuptools.packages.find]
+include = ["jarvis*"]
+
+[tool.setuptools.package-data]
+"jarvis.clients.web" = ["static/**/*"]
+"jarvis.plugins" = ["builtin/**/*"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]
+markers = [
+    "ollama: requires a running local Ollama server with models",
+    "voice: requires voice extras (faster-whisper, TTS)",
+    "kokoro: requires the installed Kokoro voice model (jarvis voice install); skipped otherwise",
+    "slow: slow tests",
+]

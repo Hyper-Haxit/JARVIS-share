@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0d0f12">
+  <title>JARVIS</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/static/icon.svg" type="image/svg+xml">
+  <script src="/static/js/theme.js"></script>
+  <link rel="stylesheet" href="/static/css/tokens.css">
+  <link rel="stylesheet" href="/static/css/presence.css">
+  <link rel="stylesheet" href="/static/css/app.css">
+  <link rel="stylesheet" href="/static/css/overlays.css">
+  <script type="module" src="/static/js/app.js"></script>
+</head>
+<body>
+  <div class="app" id="app" data-sidebar="open">
+    <nav class="sidebar" id="sidebar" aria-label="Conversations and navigation">
+      <div class="sidebar__head">
+        <span class="brand">JARVIS</span>
+        <button class="btn btn--ghost btn--icon" id="hide-sidebar" type="button" aria-label="Hide sidebar" title="Hide sidebar (Ctrl+B)">
+          <svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><path d="M9.5 4.5v15"/></svg>
+        </button>
+      </div>
+      <button class="sidebar__new" id="new-chat" type="button">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        New conversation
+      </button>
+      <div class="sidebar__list">
+        <div class="label">Recent</div>
+        <ul class="convlist" id="conv-list" aria-label="Recent conversations"></ul>
+      </div>
+      <div class="sidebar__foot">
+        <button class="navitem" type="button" data-view="tasks">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg>
+          Tasks <span class="navitem__count" id="tasks-count"></span>
+        </button>
+        <button class="navitem" type="button" data-view="memory">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M6 4h12v16l-6-4-6 4z"/></svg>
+          Memory
+        </button>
+        <button class="navitem" type="button" data-view="devices">
+          <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="13" height="10" rx="1.5"/><rect x="17" y="9" width="4" height="10" rx="1"/><path d="M7 19h6"/></svg>
+          Devices <span class="navitem__count" id="devices-count"></span>
+        </button>
+        <button class="navitem" type="button" data-view="settings">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"/></svg>
+          Settings <span class="navitem__count" id="settings-count"></span>
+        </button>
+      </div>
+    </nav>
+
+    <main class="main" id="main" data-empty="true">
+      <header class="header">
+        <div class="header__left">
+          <button class="btn btn--ghost btn--icon toggle-sidebar" id="show-sidebar" type="button" aria-label="Show sidebar" title="Show sidebar (Ctrl+B)">
+            <svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><path d="M9.5 4.5v15"/></svg>
+          </button>
+          <span class="header__title" id="conv-title"></span>
+        </div>
+        <div class="header__middle"></div>
+        <div class="header__right">
+          <button class="btn btn--ghost btn--icon mic-armed" id="mic-armed" type="button" hidden
+                  title="Listening for “Hey Jarvis”. Audio stays on this computer. Click to turn off." aria-label="Wake word is on; turn off">
+            <svg viewBox="0 0 24 24"><rect x="9" y="3.5" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V20.5"/></svg>
+          </button>
+          <span class="conn" id="conn" data-state="connecting" role="status" title="Connecting">
+            <span class="dot" data-level="busy"></span><span class="conn__text" id="conn-text"></span>
+          </span>
+          <button class="btn btn--ghost btn--icon" id="open-palette" type="button" aria-label="Commands" title="Commands (Ctrl+K)">
+            <svg viewBox="0 0 24 24"><path d="M5 8h14M5 12h9M5 16h6"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <div class="notice" id="notice" role="alert" hidden></div>
+
+      <!-- JARVIS himself: one presence, large when there is no conversation, docked above it otherwise. -->
+      <div class="stage" id="stage">
+        <jarvis-presence id="presence"></jarvis-presence>
+        <p class="orb-caption stage__caption" id="caption" aria-live="polite">Starting…</p>
+      </div>
+
+      <section class="thread" id="thread" aria-label="Conversation">
+        <div class="column">
+          <div class="empty" id="empty">
+            <h1 class="empty__greeting" id="greeting">Hello.</h1>
+            <p class="empty__line" id="empty-line"></p>
+            <div class="startup" id="startup" hidden></div>
+            <div class="empty__recent" id="empty-recent" hidden></div>
+          </div>
+          <div class="messages" id="messages" role="log" aria-live="polite" aria-relevant="additions"></div>
+        </div>
+      </section>
+      <button class="jump" id="jump" type="button" hidden>Jump to latest</button>
+
+      <div class="dock">
+        <div id="requests" aria-live="assertive"></div>
+        <div class="taskstrip" id="taskstrip"></div>
+        <form class="composer" id="composer" data-state="empty" autocomplete="off">
+          <span class="composer__progress" aria-hidden="true"></span>
+          <span class="composer__levels" id="levels" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+          <label class="sr-only" for="input">Message JARVIS</label>
+          <textarea class="composer__input" id="input" rows="1" placeholder="Message JARVIS"></textarea>
+          <button class="composer__btn composer__mic" id="mic" type="button" aria-pressed="false" aria-label="Voice input" title="Voice input (Ctrl+Shift+Space)">
+            <svg viewBox="0 0 24 24"><rect x="9" y="3.5" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V20.5"/></svg>
+          </button>
+          <button class="composer__btn composer__send" id="send" type="submit" aria-label="Send" title="Send (Enter)" disabled>
+            <svg class="send-icon" viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></svg>
+            <svg class="stop-icon" viewBox="0 0 24 24" hidden><rect x="7" y="7" width="10" height="10" rx="1.5" fill="currentColor" stroke="none"/></svg>
+          </button>
+        </form>
+        <div class="composer__hint" id="hint"><span id="hint-left"></span><span id="hint-right"></span></div>
+      </div>
+    </main>
+  </div>
+
+  <div class="pairing" id="pairing" hidden>
+    <div class="pairing__inner">
+      <jarvis-presence></jarvis-presence>
+      <p class="pairing__note" id="pair-note" hidden></p>
+      <h1 id="pair-title">Set up this device</h1>
+      <p id="pair-text"></p>
+      <div class="setup-start" id="setup-start-box" hidden>
+        <button class="btn btn--primary" id="setup-start" type="button">Set up this device</button>
+      </div>
+      <div class="setup-wait" id="setup-wait" role="status" aria-live="polite" hidden>
+        <p id="setup-wait-text"></p>
+        <p class="setup-wait__code">Code <b id="setup-code"></b></p>
+        <p class="setup-wait__alt">No window? In a terminal on this computer run <span class="code">jarvis devices approve</span>.</p>
+        <button class="btn btn--ghost" id="setup-cancel" type="button">Cancel</button>
+      </div>
+      <details class="pair-code" id="pair-code-box">
+        <summary id="pair-code-summary">I have a pairing code</summary>
+        <form id="pair-form" class="row-form">
+          <label class="sr-only" for="pair-code">Pairing code</label>
+          <input class="input" id="pair-code" placeholder="XXXXX-XXXXX" maxlength="16" autocomplete="one-time-code" required>
+          <button class="btn btn--primary" type="submit">Pair</button>
+        </form>
+      </details>
+      <p class="pairing__error" id="pair-error" role="alert"></p>
+    </div>
+  </div>
+
+  <div id="sheet-layer"></div>
+  <div id="palette-layer"></div>
+  <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+</body>
+</html>

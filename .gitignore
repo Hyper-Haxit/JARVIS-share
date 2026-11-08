@@ -1,0 +1,43 @@
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local JARVIS state (the real home is ~/.jarvis; never commit a copy of it)
+.jarvis/
+.jarvis-dev/
+*.db
+*.db-wal
+*.db-shm
+*.token
+secrets.json
+config.toml
+/logs/
+/captures/
+/workspace/
+/models/
+
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Editor / tooling / OS
+.claude/worktrees/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+node_modules/
+*.log

@@ -1,0 +1,45 @@
+/* JARVIS presence: a flat disc and two eyes. Deliberately minimal (no
+   gradients, glow, rings or decoration): the personality is in the motion.
+   The float is a CSS animation on an HTML layer (composited, no script work
+   per frame). */
+:root, :root[data-theme="dark"] {
+  --face-disc: #1b2733;
+  --face-rim: rgba(160, 210, 240, 0.08);
+  --face-rest: #b4e2fa;
+  --face-active: #e2f5ff;
+  --face-warn: #f0c679;
+  --face-err: #f09581;
+  --face-off: #56626d;
+}
+:root[data-theme="light"] {
+  --face-disc: #ffffff;
+  --face-rim: rgba(20, 40, 60, 0.1);
+  --face-rest: #2a6890;
+  --face-active: #155f92;
+  --face-warn: #a46a14;
+  --face-err: #bf4636;
+  --face-off: #a7aeb5;
+}
+
+jarvis-presence { display: inline-block; width: var(--size, 120px); height: var(--size, 120px); flex: none; --tone: var(--face-rest); }
+jarvis-presence[data-tone="active"] { --tone: var(--face-active); }
+jarvis-presence[data-tone="warn"] { --tone: var(--face-warn); }
+jarvis-presence[data-tone="err"] { --tone: var(--face-err); }
+jarvis-presence[data-tone="off"] { --tone: var(--face-off); }
+
+.face__float { width: 100%; height: 100%; animation: face-float 6.2s ease-in-out infinite; }
+.face__float svg { display: block; width: 100%; height: 100%; overflow: visible; }
+@keyframes face-float { 0%, 100% { translate: 0 0; } 50% { translate: 0 -2.5%; } }
+/* Asleep while offline: no float. */
+jarvis-presence[data-state="offline"] .face__float { animation-play-state: paused; }
+
+.face__disc {
+  fill: var(--face-disc); stroke: var(--face-rim); stroke-width: 1;
+  opacity: calc(1 - var(--dim, 0) * 0.35);
+  transition: opacity 600ms var(--ease), fill 400ms var(--ease);
+}
+.face__eye, .face__mouth { fill: var(--tone); transition: fill 400ms var(--ease); }
+
+@media (prefers-reduced-motion: reduce) {
+  .face__float { animation: none; }
+}

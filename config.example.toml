@@ -1,0 +1,64 @@
+# Example JARVIS configuration.
+#
+# JARVIS works with no config file at all. To change something, copy this file to
+# <JARVIS home>/config.toml (see `jarvis doctor` for the home folder) and edit it.
+# Every key can also be set as an environment variable: JARVIS__SECTION__KEY.
+#
+# API keys never go in this file. Store them with `jarvis secret set <name>` and
+# refer to them by name (`api_key_secret = "..."`).
+
+# node_name = "my-desktop"           # how this machine shows up; default: the computer name
+
+[server]
+host = "127.0.0.1"                   # keep loopback unless you set up TLS (see below)
+port = 7777
+# tls_cert = "/path/to/cert.pem"     # needed before binding to a LAN address
+# tls_key  = "/path/to/key.pem"
+
+# ---- Model providers. The default is a local Ollama server; nothing leaves the
+#      machine. Add a cloud provider only if you want one.
+[[providers]]
+name = "ollama"
+type = "ollama"
+base_url = "http://127.0.0.1:11434"
+
+# [[providers]]
+# name = "anthropic"
+# type = "anthropic"
+# api_key_secret = "anthropic_api_key"   # jarvis secret set anthropic_api_key
+
+# [[providers]]
+# name = "openai"
+# type = "openai"
+# base_url = "https://api.openai.com/v1"
+# api_key_secret = "openai_api_key"
+
+# ---- Which model answers which kind of request ("provider/model", in order of preference)
+[roles]
+fast      = ["ollama/qwen3:4b-instruct"]
+reasoning = ["ollama/qwen2.5:7b"]
+coding    = ["ollama/qwen2.5-coder:7b"]
+vision    = ["ollama/gemma3:4b"]
+embedding = ["ollama/nomic-embed-text"]
+fallback  = ["ollama/llama3.2:3b"]
+
+# ---- Voice (off by default; needs `pip install -e ".[voice]"` and `jarvis voice install`)
+[voice]
+enabled = false
+wake_word = "hey_jarvis"
+tts_engine = "kokoro"                 # "kokoro" | "system" | "none"
+tts_voice = "af_heart"
+tts_fallback = "system"
+allow_cloud_audio = false             # audio never leaves the device unless you allow it
+
+# ---- Optional integrations
+# [web]
+# searxng_url = "http://127.0.0.1:8080"
+# brave_api_key_secret = "brave_api_key"
+
+# [home_assistant]
+# url = "http://homeassistant.local:8123"
+# token_secret = "home_assistant_token"
+
+# [calendar]
+# sources = ["/path/to/calendar.ics"]

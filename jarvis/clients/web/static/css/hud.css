@@ -1,0 +1,12 @@
+/* Compact view: presence and one line of real state. Suitable for a small
+   always-on-top window, a second screen or a wearable display. */
+body.hud { background: var(--bg); overflow: hidden; }
+.hud__frame { height: 100vh; display: flex; align-items: center; gap: 16px; padding: 0 20px; }
+.hud jarvis-presence { --size: min(72px, 62vh); }
+.hud__text { min-width: 0; }
+.hud__name { font-weight: 600; font-size: 14px; }
+.hud__line { font-size: 13px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@media (max-aspect-ratio: 1/1) {
+  .hud__frame { flex-direction: column; justify-content: center; text-align: center; }
+  .hud jarvis-presence { --size: min(140px, 46vw); }
+}

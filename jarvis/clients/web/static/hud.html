@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JARVIS</title>
+  <link rel="icon" href="/static/icon.svg" type="image/svg+xml">
+  <script src="/static/js/theme.js"></script>
+  <link rel="stylesheet" href="/static/css/tokens.css">
+  <link rel="stylesheet" href="/static/css/presence.css">
+  <link rel="stylesheet" href="/static/css/hud.css">
+  <script type="module" src="/static/js/hud.js"></script>
+</head>
+<body class="hud">
+  <main class="hud__frame" aria-label="JARVIS">
+    <jarvis-presence id="presence"></jarvis-presence>
+    <div class="hud__text">
+      <div class="hud__name" id="name">JARVIS</div>
+      <div class="hud__line" id="line" role="status" aria-live="polite">Starting…</div>
+    </div>
+  </main>
+</body>
+</html>
