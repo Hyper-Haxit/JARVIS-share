@@ -21,7 +21,7 @@ const NARROW = matchMedia("(max-width: 1080px)");
 function greeting(name) {
   const hr = new Date().getHours();
   const part = hr < 5 ? "Good evening" : hr < 12 ? "Good morning" : hr < 18 ? "Good afternoon" : "Good evening";
-  return name ? `${part}, ${name}.` : `${part}.`;
+  return name ? `${part}, ${name}` : part;
 }
 
 class App {
@@ -232,7 +232,7 @@ class App {
     // (the error itself stays in the conversation).
     const p = this.store.presence === PRESENCE.ERROR && presence.state !== "error" ? derivePresence({ ...f, error: null }) : this.store.presence;
     let text = "", tone_ = "";
-    if (!f.coreReachable) text = this.started ? "Offline" : "Starting…";
+    if (!f.coreReachable) text = this.started ? "Offline" : "Starting";
     else if (f.link !== "connected") text = "Connecting…";
     else if (p === PRESENCE.ERROR) { text = "Something went wrong"; tone_ = "err"; }
     else if (p === PRESENCE.WAITING) { text = "Waiting for your OK"; tone_ = "warn"; }

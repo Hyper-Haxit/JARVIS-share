@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="JARVIS, a personal assistant that runs on your own computer.">
   <meta name="theme-color" content="#0d0f12">
   <title>JARVIS</title>
   <link rel="manifest" href="/manifest.webmanifest">
@@ -79,13 +80,13 @@
       <!-- JARVIS himself: one presence, large when there is no conversation, docked above it otherwise. -->
       <div class="stage" id="stage">
         <jarvis-presence id="presence"></jarvis-presence>
-        <p class="orb-caption stage__caption" id="caption" aria-live="polite">Starting…</p>
+        <p class="orb-caption stage__caption" id="caption" aria-live="polite">Starting</p>
       </div>
 
       <section class="thread" id="thread" aria-label="Conversation">
         <div class="column">
           <div class="empty" id="empty">
-            <h1 class="empty__greeting" id="greeting">Hello.</h1>
+            <h1 class="empty__greeting" id="greeting">Hello</h1>
             <p class="empty__line" id="empty-line"></p>
             <div class="startup" id="startup" hidden></div>
             <div class="empty__recent" id="empty-recent" hidden></div>
